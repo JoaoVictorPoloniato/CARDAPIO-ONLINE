@@ -21,6 +21,25 @@ cartModal.addEventListener("click", function(event){
     }
 })
 
+// fechar o modal quando clicar no botao fechar
 closeModalBtn.addEventListener("click", function(){
     cartModal.style.display = "none"
 })
+
+menu.addEventListener("click", function(event){
+    
+    let parentButton = event.target.closest(".add-to-cart-btn")
+
+    if(parentButton){
+        const name = parentButton.getAttribute("data-name")
+        const price = parseFloat(parentButton.getAttribute("data-price"))
+
+        addToCart(name,price)
+    }
+})
+
+// Função para adicionar no carrinho
+
+function addToCart(name, price){
+    alert("O item é " + name)
+}
