@@ -77,7 +77,7 @@ function updateCartModal(){
                     <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</ p>
                 </div>
 
-                <button>
+                <button class="bg-red-500 px-4 py-1 text-white remove-btn" data-name="${item.name}">
                     Remover
                 </button>
 
@@ -89,5 +89,99 @@ function updateCartModal(){
         cartItemsContainer.appendChild(cartItemElement)
     })
 
-    cartTotal.textContent = total.toFixed(2);
+    cartTotal.textContent = total.toLocaleString("pt-br", {
+        style: "currency",
+        currency: "BRL"
+    });
+
+    cartCounter.innerHTML = cart.length;
+}
+
+// função de remover item do carrinho
+cartItemsContainer.addEventListener("click", function(event) {
+    if(event.target.classList.contains("remove-btn")){
+        const name = event.target.getAttribute("data-name")
+    }
+})
+
+function removeItemCart(name) {
+    const index = cart.findIndex(item => item.name === name);
+
+    if (index !== -1) {
+        const item = cart[index];
+
+        if (item.quantity > 1) {
+            item.quantity -= 1;
+        } else {
+            cart.splice(index, 1);
+        }
+
+        updateCartModal(); // Atualize o modal após remover o item
+    }
+}
+
+cartItemsContainer.addEventListener("click", function(event) {
+    if(event.target.classList.contains("remove-btn")){
+        const name = event.target.getAttribute("data-name");
+        removeItemCart(name); // Chamada da função para remover o item do carrinho
+    }
+});
+
+
+addressInput.addEventListener("input", function(event){
+    let inputValue = event.target.value;
+
+    if(inputValue !== ""){
+        addressInput.classList.remove("border-red-500")
+        addressWarn.classList.add("hidden")
+    }
+})
+
+checkoutBtn.addEventListener("click", function(){
+
+   // const isOpen = checkRestaurantOpen();
+   // if(!isOpen){
+   //     alert("Restaurante fechado no momento tente novamente mais tarde!");
+     //   return;
+    //}
+
+
+    if(cart.length === 0) return;
+    if(addressInput.value === ""){
+        addressWarn.classList.remove("hidden")
+        addressInput.classList.add("border-red-500")
+        return;
+    }
+
+    // enviar pedido para a API DO ZAP
+
+    const cartItems = cart.map((item) => {
+        return (
+           `${item.name} Quantidade: (${item.quantity}) Preço: R$${item.price} |`
+        )
+    }).join("")
+
+    const message = encodeURIComponent(cartItems)
+    const phone = "5566996837095"
+
+    window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`, "_blank");
+})
+
+
+// verificar a hora e manipular o card horario
+function checkRestaurantOpen(){
+    const data = new Date();
+    const hora = data.getHours();
+    return hora >= 18 && hora < 22; //true
+}
+
+const spanItem = document.getElementById("date-span")
+const isOpen = checkRestaurantOpen();
+
+if(isOpen){
+    spanItem.classList.remove("bg-red-500");
+    spanItem.classList.add("bg-green-600");
+}else{
+    spanItem.classList.remove("bg-green-600");
+    spanItem.classList.add("bg-red-500")
 }
