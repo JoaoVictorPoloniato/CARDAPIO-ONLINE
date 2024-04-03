@@ -165,6 +165,9 @@ checkoutBtn.addEventListener("click", function(){
     const phone = "5566996837095"
 
     window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`, "_blank");
+
+    cart.length = 0;
+    updateCartModal();
 })
 
 
