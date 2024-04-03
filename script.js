@@ -9,8 +9,11 @@ const cartCounter = document.getElementById("cart-count")
 const addressInput = document.getElementById("address")
 const addressWarn = document.getElementById("address-warn")
 
+let cart = [];
+
 // abrir o modal do carrinho
 cartBtn.addEventListener("click", function() {
+    updateCartModal();
     cartModal.style.display = "flex"
 })
 
@@ -40,6 +43,51 @@ menu.addEventListener("click", function(event){
 
 // Função para adicionar no carrinho
 
-function addToCart(name, price){
-    alert("O item é " + name)
+function addToCart(name, price) {
+    const existingItemIndex = cart.findIndex(item => item.name === name && item.price === price);
+
+    if (existingItemIndex !== -1) {
+        // Se o item já existe, aumenta apenas a quantidade + 1
+        cart[existingItemIndex].quantity += 1;
+    } else {
+        cart.push({
+            name,
+            price,
+            quantity: 1,
+        });
+    }
+
+    updateCartModal();
+}
+
+
+function updateCartModal(){
+    cartItemsContainer.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        const cartItemElement = document.createElement("div");
+        cartItemElement.classList.add("flex", "justify-between", "mb-4", "flex-col")
+
+        cartItemElement.innerHTML = `
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="font-medium">${item.name}</p>
+                    <p>Qtd: ${item.quantity}</p>
+                    <p class="font-medium mt-2">R$ ${item.price.toFixed(2)}</ p>
+                </div>
+
+                <button>
+                    Remover
+                </button>
+
+            </div>
+        `
+
+        total += item.price * item.quantity;
+
+        cartItemsContainer.appendChild(cartItemElement)
+    })
+
+    cartTotal.textContent = total.toFixed(2);
 }
